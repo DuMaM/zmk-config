@@ -1,0 +1,48 @@
+# Copyright (c) 2020-2021 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+if SHIELD_DACTYLMANUFORM
+	
+# TODO: MOVE TO PARTICLE BOARD
+config BUILD_OUTPUT_UF2
+	default y
+
+# TODO: MOVE TO PARTICLE BOARD
+config FLASH_LOAD_OFFSET 
+	default 0x26000
+
+config BT_CTLR
+	default BT
+
+config ZMK_BLE
+	default y
+
+config ZMK_USB
+	default y
+
+config USB_NRFX
+	default y
+
+config USB_DEVICE_STACK
+	default y
+
+# TODO: ADD SUPPORT FOR ZMK
+# config ZMK_BATTERY_VOLTAGE_DIVIDER
+# 	default y
+
+
+### split 
+config ZMK_SPLIT
+	default y
+	select ZMK_SPLIT_BLE
+
+config ZMK_SPLIT_MAIN
+	bool "If this is set then board is used as a main one. Left one should be flashed with main"
+	default n
+	select ZMK_SPLIT_BLE_ROLE_CENTRAL
+
+config ZMK_KEYBOARD_NAME
+    default "DactylManuMain" if ZMK_SPLIT_MAIN
+    default "DactylManuSub" if !ZMK_SPLIT_MAIN
+
+endif # SHIELD_DACTYLMANUFORM
