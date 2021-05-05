@@ -1,25 +1,32 @@
 # Copyright (c) 2020-2021 The ZMK Contributors
 # SPDX-License-Identifier: MIT
 
-if SHIELD_DACTYLMANUFORM
+if SHIELD_DACTYLMANUFORM_LEFT || SHIELD_DACTYLMANUFORM_RIGHT
 
 config ZMK_KEYBOARD_NAME
-	default "dactyl_manuform"
-	
+    default "DactylManuLeft" if SHIELD_DACTYLMANUFORM_LEFT
+    default "DactylManuRight" if SHIELD_DACTYLMANUFORM_RIGHT
+
+config ZMK_SPLIT_BLE_ROLE_CENTRAL
+    default y if SHIELD_DACTYLMANUFORM_LEFT
+    default n if SHIELD_DACTYLMANUFORM_RIGHT
+
 # TODO: MOVE TO PARTICLE BOARD
+### flash
 config BUILD_OUTPUT_UF2
 	default y
 
-# TODO: MOVE TO PARTICLE BOARD
 config FLASH_LOAD_OFFSET 
 	default 0x26000
 
+### ble
 config BT_CTLR
 	default BT
 
 config ZMK_BLE
 	default y
 
+### usb
 config ZMK_USB
 	default y
 
@@ -29,8 +36,12 @@ config USB_NRFX
 config USB_DEVICE_STACK
 	default y
 
+### split 
+config ZMK_SPLIT
+	default y
+	select ZMK_SPLIT_BLE
+
 # TODO: ADD SUPPORT FOR ZMK
 # config ZMK_BATTERY_VOLTAGE_DIVIDER
 # 	default y
-
-endif # SHIELD_DACTYLMANUFORM
+endif
