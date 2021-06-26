@@ -47,7 +47,7 @@ jobs:
           args: 'zephyr-export'
       - name: West Build
         uses: 'docker://zmkfirmware/zephyr-west-action-arm:latest'
-        id: west-build
+        id: west-build-left
         with:
           args: 'build "--pristine -s zmk/app -b particle_xenon -- -DSHIELD=dactyl_manuform_left -DZMK_CONFIG=/github/workspace/config"'
       - name: Archive
@@ -57,7 +57,7 @@ jobs:
           path: build/zephyr/dactyl_manuform_left.uf2
       - name: West Build
         uses: 'docker://zmkfirmware/zephyr-west-action-arm:latest'
-        id: west-build
+        id: west-build-right
         with:
           args: 'build "--pristine -s zmk/app -b particle_xenon -- -DSHIELD=dactyl_manuform_right -DZMK_CONFIG=/github/workspace/config"'
       - name: Archive
