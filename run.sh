@@ -1,11 +1,11 @@
 #!/bin/bash
-set -e
+set -ex
 
 DEFAULT_REPO_PATH="../zmk/app"
 
-LEFT=false
-RIGHT=false
+SIDE=""
 BOOTLOADER=true
+FLASH=false
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]; do
@@ -13,15 +13,19 @@ while [[ $# -gt 0 ]]; do
 
     case $key in
     -l | --left)
-        LEFT=true
+        SIDE="left"
         shift # past arg
         ;;
     -r | --right)
-        RIGHT=true
+        SIDE="right"
         shift # past arg
         ;;
     -n | --noboot)
         BOOTLOADER=false
+        shift # past arg
+        ;;
+    -f | --flash)
+        FLASH=true
         shift # past arg
         ;;
     *)                     # unknown option
@@ -34,39 +38,40 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 (
     cd $DEFAULT_REPO_PATH
-    
-    # clean up
-    rm -rf dfu-package.zip build
 
-    if $LEFT; then
-        echo "building left"
-        west build -p always -b particle_xenon -- -DSHIELD=dactyl_manuform_left -DZMK_CONFIG="$PWD/../../zmk-config/config"
-    elif $RIGHT; then
-        echo "building right"
-        west build -p always -b particle_xenon -- -DSHIELD=dactyl_manuform_right -DZMK_CONFIG="$PWD/../../zmk-config/config"
+    if [ -n "$SIDE" ]; then
+        # clean up
+
+        rm -rf build
+
+        echo "Building $SIDE"
+        west build -p always -b particle_xenon -- -DSHIELD=dactyl_manuform_$SIDE -DZMK_CONFIG="$PWD/../../zmk-config/config"
+    fi
+
+    if $BOOTLOADER; then
+        FLASH_IMG=$(find build/zephyr -name "zmk*.hex")
+        echo "Gen package for Adafruit bootloader from $FLASH_IMG"
+
+        rm -rf dfu-package.zip
+        adafruit-nrfutil dfu genpkg --dev-type 0x0052 --application "$FLASH_IMG" dfu-package.zip
     else
-        echo "Please define proper board site"
-        exit 1
+        FLASH_IMG=$(find build/zephyr -name "zmk*.elf")
     fi
 
 
-    if $BOOTLOADER; then
-        FLASH_IMG=$(find build/zephyr -name "dactyl_manuform*.hex")
+    if $FLASH; then
         echo "Flashing $FLASH_IMG"
 
-        latestDevice=$(ls /dev/ttyACM* -1tr | tail -n1)
-        rm -rf dfu-package.zip
-        adafruit-nrfutil dfu genpkg --dev-type 0x0052 --application "$FLASH_IMG" dfu-package.zip
-        adafruit-nrfutil dfu serial --package dfu-package.zip -p "$latestDevice" -b 115200
-    else
-        FLASH_IMG=$(find build/zephyr -name "dactyl_manuform*.elf")
-        echo "Flashing $FLASH_IMG"
-
-        openocd -f interface/ftdi/jtag-lock-pick_tiny_2.cfg \
-                -c "transport select swd" \
-                -f target/nrf52.cfg \
-                -c "init" \
-                -c "program $FLASH_IMG verify" \
-                -c "exit"
+        if $BOOTLOADER; then
+            latestDevice=$(ls /dev/ttyACM* -1tr | tail -n1)
+            adafruit-nrfutil dfu serial --package dfu-package.zip -p "$latestDevice" -b 115200
+        else
+            openocd -f interface/ftdi/jtag-lock-pick_tiny_2.cfg \
+                    -c "transport select swd" \
+                    -f target/nrf52.cfg \
+                    -c "init; reset; halt" \
+                    -c "nrf5 mass_erase" \
+                    -c "program $FLASH_IMG verify reset exit"
+        fi
     fi
 )
