@@ -56,6 +56,8 @@ adafriut_flash: &flash0 {
 / {
 	chosen {
 		zephyr,code-partition = &code_partition;
+		zephyr,storage_partition = &storage_partition;
+		zephyr,boot_partition = &boot_partition;
 		zephyr,sram = &sram0;
 		zephyr,flash = &adafriut_flash;
 	};
