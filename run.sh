@@ -6,7 +6,7 @@ DEFAULT_REPO_PATH="../zmk/app"
 SIDE=""
 BOOTLOADER=true
 FLASH=false
-
+LOG=false
 POSITIONAL=()
 while [[ $# -gt 0 ]]; do
     key="$1"

@@ -16,7 +16,7 @@ config ZMK_SPLIT_BLE_ROLE_CENTRAL
 config BUILD_OUTPUT_BIN
 	bool
 	default y
-	
+
 config BUILD_OUTPUT_UF2
 	bool
 	default y
@@ -37,7 +37,7 @@ config USB_DEVICE_STACK
 
 ### ble
 config ZMK_BLE
-	default n
+	default y
 
 ### split
 if ZMK_BLE
