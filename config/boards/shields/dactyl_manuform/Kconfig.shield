@@ -1,8 +1,8 @@
 # Copyright (c) 2020-2021 The ZMK Contributors
 # SPDX-License-Identifier: MIT
 
-config SHIELD_DACTYLMANUFORM_LEFT
+config SHIELD_DACTYL_MANUFORM_LEFT
 	def_bool $(shields_list_contains,dactyl_manuform_left)
 
-config SHIELD_DACTYLMANUFORM_RIGHT
+config SHIELD_DACTYL_MANUFORM_RIGHT
 	def_bool $(shields_list_contains,dactyl_manuform_right)

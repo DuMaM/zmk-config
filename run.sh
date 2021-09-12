@@ -28,6 +28,10 @@ while [[ $# -gt 0 ]]; do
         FLASH=true
         shift # past arg
         ;;
+    -d | --debug)
+        LOG=true
+        shift # past arg
+        ;;
     *)                     # unknown option
         POSITIONAL+=("$1") # save it in an array for later
         shift              # past argument
@@ -36,6 +40,7 @@ while [[ $# -gt 0 ]]; do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
+export SHIELD_NAME="dactyl_manuform_$SIDE"
 (
     cd $DEFAULT_REPO_PATH
 
@@ -45,11 +50,11 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
         rm -rf build
 
         echo "Building $SIDE"
-        west build -p always -b particle_xenon -- -DSHIELD=dactyl_manuform_$SIDE -DZMK_CONFIG="$PWD/../../zmk-config/config"
+        west build -p always -b particle_xenon -- -DSHIELD=$SHIELD_NAME -DZMK_CONFIG="$PWD/../../zmk-config/config"
     fi
 
     if $BOOTLOADER; then
-        FLASH_IMG=$(find build/zephyr -name "zmk*.hex")
+        FLASH_IMG=$(find build/zephyr -name "$SHIELD_NAME*.hex")
         echo "Gen package for Adafruit bootloader from $FLASH_IMG"
 
         rm -rf dfu-package.zip
@@ -73,5 +78,11 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
                     -c "nrf5 mass_erase" \
                     -c "program $FLASH_IMG verify reset exit"
         fi
+    fi
+)
+
+(
+    if $LOG; then
+        ./log.py
     fi
 )
