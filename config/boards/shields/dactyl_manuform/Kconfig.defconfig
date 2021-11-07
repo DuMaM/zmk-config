@@ -2,15 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 if SHIELD_DACTYL_MANUFORM_LEFT || SHIELD_DACTYL_MANUFORM_RIGHT
-
-config ZMK_KEYBOARD_NAME
-    default "DactylLeft" if SHIELD_DACTYL_MANUFORM_LEFT
-    default "DactylRight" if SHIELD_DACTYL_MANUFORM_RIGHT
-
-config ZMK_SPLIT_BLE_ROLE_CENTRAL
-    default n if SHIELD_DACTYL_MANUFORM_LEFT
-    default y if SHIELD_DACTYL_MANUFORM_RIGHT
-
 # TODO: MOVE TO PARTICLE BOARD
 ### flash
 config BUILD_OUTPUT_BIN
@@ -41,10 +32,18 @@ config ZMK_BLE
 
 ### split
 if ZMK_BLE
+config ZMK_SPLIT_BLE_ROLE_CENTRAL
+    default y if SHIELD_DACTYL_MANUFORM_LEFT
+    default n if SHIELD_DACTYL_MANUFORM_RIGHT
+
 config ZMK_SPLIT
 	default y
 	select ZMK_SPLIT_BLE
 endif
+
+config ZMK_KEYBOARD_NAME
+    default "DactylLeft" if SHIELD_DACTYL_MANUFORM_LEFT
+    default "DactylRight" if SHIELD_DACTYL_MANUFORM_RIGHT
 
 # TODO: ADD SUPPORT FOR ZMK
 # config ZMK_BATTERY_VOLTAGE_DIVIDER

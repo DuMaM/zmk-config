@@ -7,6 +7,7 @@ SIDE=""
 BOOTLOADER=true
 FLASH=false
 LOG=false
+SETTINGS=false
 POSITIONAL=()
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -14,10 +15,12 @@ while [[ $# -gt 0 ]]; do
     case $key in
     -l | --left)
         SIDE="left"
+        export SHIELD_NAME="dactyl_manuform_$SIDE"
         shift # past arg
         ;;
     -r | --right)
         SIDE="right"
+        export SHIELD_NAME="dactyl_manuform_$SIDE"
         shift # past arg
         ;;
     -n | --noboot)
@@ -32,6 +35,10 @@ while [[ $# -gt 0 ]]; do
         LOG=true
         shift # past arg
         ;;
+    -s | --settings)
+        export SHIELD_NAME="settings_reset_particle"
+        shift # past arg
+        ;;
     *)                     # unknown option
         POSITIONAL+=("$1") # save it in an array for later
         shift              # past argument
@@ -40,16 +47,16 @@ while [[ $# -gt 0 ]]; do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
-export SHIELD_NAME="dactyl_manuform_$SIDE"
+
 (
     cd $DEFAULT_REPO_PATH
 
-    if [ -n "$SIDE" ]; then
+    if [ -n "$SHIELD_NAME" ]; then
         # clean up
 
         rm -rf build
 
-        echo "Building $SIDE"
+        echo "Building $SHIELD_NAME"
         west build -p always -b particle_xenon -- -DSHIELD=$SHIELD_NAME -DZMK_CONFIG="$PWD/../../zmk-config/config"
     fi
 

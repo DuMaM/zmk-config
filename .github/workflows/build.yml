@@ -5,11 +5,6 @@ name: Build
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      env.KEYBOARD_TITLE: "Dactyl Manuform"
-      env.SHIELD_NAME: "dactyl_manuform"
-      env.BOARD_NAME: "particle_xenon"
-
     container:
       image: zmkfirmware/zmk-build-arm:2.5
     name: Build
@@ -38,29 +33,47 @@ jobs:
         run: west update
       - name: West Zephyr export
         run: west zephyr-export
-      - name: West Build (${{ env.KEYBOARD_TITLE }}_left)
-        run: west build -s zmk/app -b ${{ env.BOARD_NAME }} -- -DSHIELD=${{ env.SHIELD_NAME }}_left -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
-      - name: ${{ env.KEYBOARD_TITLE }}_left DTS File
-        if: ${{ always() }}
-        run: cat -n build/zephyr/${{ env.BOARD_NAME }}.dts.pre.tmp
-      - name: ${{ env.KEYBOARD_TITLE }}_left Kconfig file
-        run: cat build/zephyr/.config | grep -v "^#" | grep -v "^$"
-      - name: Rename zmk.uf2
-        run: cp build/zephyr/zmk.uf2 ${{ env.SHIELD_NAME }}_left_${{ env.BOARD_NAME }}.uf2
-      - name: Archive (${{ env.KEYBOARD_TITLE }}_left)
-        uses: actions/upload-artifact@v2
-        with:
-          name: firmware
-          path: ${{ env.SHIELD_NAME }}_left_${{ env.BOARD_NAME }}.uf2
-      - name: West Build (${{ env.KEYBOARD_TITLE }}_right)
-        run: west build --pristine -s zmk/app -b ${{ env.BOARD_NAME }} -- -DSHIELD=${{ env.SHIELD_NAME }}_right -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
 
-      - name: ${{ env.KEYBOARD_TITLE }}_right Kconfig file
+      - name: West Build (Dactyl Manu Left)
+        run: west build -s zmk/app -b particle_xenon -- -DSHIELD=dactyl_manuform_left -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+      - name: Dactyl Manu DTS File
+        if: ${{ always() }}
+        run: cat -n build/zephyr/particle_xenon.dts.pre.tmp
+      - name: Dactyl Manu Left Kconfig file
         run: cat build/zephyr/.config | grep -v "^#" | grep -v "^$"
       - name: Rename zmk.uf2
-        run: cp build/zephyr/zmk.uf2 ${{ env.SHIELD_NAME }}_right_${{ env.BOARD_NAME }}.uf2
-      - name: Archive (${{ env.KEYBOARD_TITLE }}_right)
+        run: cp build/zephyr/zmk.uf2 dactyl_manuform_left_particle_xenon.uf2
+      - name: Archive (Dactyl Manu Left)
         uses: actions/upload-artifact@v2
         with:
           name: firmware
-          path: ${{ env.SHIELD_NAME }}_right_${{ env.BOARD_NAME }}.uf2
+          path: dactyl_manuform_left_particle_xenon.uf2
+
+      - name: West Build (Dactyl Manu Right)
+        run: west build --pristine -s zmk/app -b particle_xenon -- -DSHIELD=dactyl_manuform_right -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+
+      - name: Dactyl Manu Right Kconfig file
+        run: cat build/zephyr/.config | grep -v "^#" | grep -v "^$"
+      - name: Rename zmk.uf2
+        run: cp build/zephyr/zmk.uf2 dactyl_manuform_right_particle_xenon.uf2
+      - name: Archive (Dactyl Manu Right)
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware
+          path: dactyl_manuform_right_particle_xenon.uf2
+
+
+      - name: West Build (Particle Reset)
+        run: west build -s zmk/app -b particle_xenon -- -DSHIELD=settings_reset_particle -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+      - name: Dactyl Manu DTS File
+        if: ${{ always() }}
+        run: cat -n build/zephyr/particle_xenon.dts.pre.tmp
+      - name: Particle Reset Kconfig file
+        run: cat build/zephyr/.config | grep -v "^#" | grep -v "^$"
+      - name: Rename zmk.uf2
+        run: cp build/zephyr/zmk.uf2 settings_reset_particle_particle_xenon.uf2
+      - name: Archive (Dactyl Manu Left)
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware
+          path: settings_reset_particle_particle_xenon.uf2
