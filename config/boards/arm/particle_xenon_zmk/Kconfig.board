@@ -1,0 +1,3 @@
+config BOARD_PARTICLE_XENON_ZMK
+	bool "Particle Xenon"
+	depends on BOARD_PARTICLE_XENON

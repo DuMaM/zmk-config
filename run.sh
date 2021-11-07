@@ -50,7 +50,7 @@ export SHIELD_NAME="dactyl_manuform_$SIDE"
         rm -rf build
 
         echo "Building $SIDE"
-        west build -p always -b particle_xenon -- -DSHIELD=$SHIELD_NAME -DZMK_CONFIG="$PWD/../../zmk-config/config"
+        west build -p always -b particle_xenon_zmk -- -DSHIELD=$SHIELD_NAME -DZMK_CONFIG="$PWD/../../zmk-config/config"
     fi
 
     if $BOOTLOADER; then

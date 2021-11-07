@@ -4,43 +4,14 @@
 if SHIELD_DACTYL_MANUFORM_LEFT || SHIELD_DACTYL_MANUFORM_RIGHT
 
 config ZMK_KEYBOARD_NAME
-    default "DactylLeft" if SHIELD_DACTYL_MANUFORM_LEFT
-    default "DactylRight" if SHIELD_DACTYL_MANUFORM_RIGHT
+    default "Dactyl" if SHIELD_DACTYL_MANUFORM_RIGHT
 
+### split
+if ZMK_BLE
 config ZMK_SPLIT_BLE_ROLE_CENTRAL
     default n if SHIELD_DACTYL_MANUFORM_LEFT
     default y if SHIELD_DACTYL_MANUFORM_RIGHT
 
-# TODO: MOVE TO PARTICLE BOARD
-### flash
-config BUILD_OUTPUT_BIN
-	bool
-	default y
-
-config BUILD_OUTPUT_UF2
-	bool
-	default y
-
-config FLASH_LOAD_OFFSET
-	default 0x26000
-
-### usb
-config ZMK_USB
-	default y
-
-config USB_NRFX
-	default y
-
-config USB_DEVICE_STACK
-	default y
-
-
-### ble
-config ZMK_BLE
-	default y
-
-### split
-if ZMK_BLE
 config ZMK_SPLIT
 	default y
 	select ZMK_SPLIT_BLE

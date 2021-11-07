@@ -62,3 +62,4 @@ adafriut_flash: &flash0 {
 		zephyr,flash = &adafriut_flash;
 	};
 };
+
