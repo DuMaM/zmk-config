@@ -5,6 +5,15 @@ if SHIELD_SETTINGS_RESET
 
 config ZMK_KEYBOARD_NAME
 	default "SETTINGS RESET PARTICLE"
+config BUILD_OUTPUT_BIN
+	bool
+	default y
 
+config BUILD_OUTPUT_UF2
+	bool
+	default y
+
+config FLASH_LOAD_OFFSET
+	default 0x26000
 endif
 
