@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -e
 
 DEFAULT_REPO_PATH="../zmk/app"
 
@@ -76,6 +76,7 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
         if $BOOTLOADER; then
             latestDevice=$(ls /dev/ttyACM* -1tr | tail -n1)
+            echo "Flashing device $latestDevice"
             adafruit-nrfutil dfu serial --package dfu-package.zip -p "$latestDevice" -b 115200
         else
             openocd -f interface/ftdi/jtag-lock-pick_tiny_2.cfg \
